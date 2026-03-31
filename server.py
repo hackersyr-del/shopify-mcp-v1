@@ -357,7 +357,7 @@ async def shopify_update_product(params: UpdateProductInput) -> str:
             val = getattr(params, field)
             if val is not None:
                 product[field] = val
-        data = await _request("PUT", f"products/{params.product_id}.json", body={"product": product})
+        data = await _request("PUT", f"products/{params.product_id}.json", json={"product": product})
         return _fmt(data.get("product", data))
     except Exception as e:
         return _error(e)
