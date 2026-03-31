@@ -379,7 +379,7 @@ async def shopify_delete_product(params: DeleteProductInput) -> str:
         return f"Product {params.product_id} deleted."
     except Exception as e:
         return _error(e)
-      class UpdateProductInput(BaseModel):
+class UpdateProductInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
     product_id:      int            = Field(...,        description="The Shopify product ID to update")
     title:           Optional[str]  = Field(default=None, description="New product title")
