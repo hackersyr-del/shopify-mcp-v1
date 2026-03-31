@@ -379,6 +379,32 @@ async def shopify_delete_product(params: DeleteProductInput) -> str:
         return f"Product {params.product_id} deleted."
     except Exception as e:
         return _error(e)
+      class UpdateProductInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    product_id:      int            = Field(...,        description="The Shopify product ID to update")
+    title:           Optional[str]  = Field(default=None, description="New product title")
+    body_html:       Optional[str]  = Field(default=None, description="Product description in HTML")
+    seo_title:       Optional[str]  = Field(default=None, description="SEO meta title")
+    seo_description: Optional[str]  = Field(default=None, description="SEO meta description")
+    status:          Optional[str]  = Field(default=None, description="active, archived, or draft")
+
+@mcp.tool(
+    name="shopify_update_product",
+    annotations={"readOnlyHint": False, "destructiveHint": False, "idempotentHint": True, "openWorldHint": True},
+)
+async def shopify_update_product(params: UpdateProductInput) -> str:
+    """Update a product's title, description (body_html), SEO title, SEO meta description, or status."""
+    try:
+        payload: dict = {"product": {"id": params.product_id}}
+        if params.title           is not None: payload["product"]["title"]                              = params.title
+        if params.body_html       is not None: payload["product"]["body_html"]                          = params.body_html
+        if params.seo_title       is not None: payload["product"]["metafields_global_title_tag"]        = params.seo_title
+        if params.seo_description is not None: payload["product"]["metafields_global_description_tag"]  = params.seo_description
+        if params.status          is not None: payload["product"]["status"]                             = params.status
+        result = await _request("PUT", f"products/{params.product_id}.json", json=payload)
+        return f"Product {params.product_id} updated successfully."
+    except Exception as e:
+        return _error(e)
 
 
 class ProductCountInput(BaseModel):
