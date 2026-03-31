@@ -343,6 +343,8 @@ class UpdateProductInput(BaseModel):
     tags:         Optional[str]  = Field(default=None)
     status:       Optional[str]  = Field(default=None, description="active, archived, or draft")
     variants:     Optional[List[Dict[str, Any]]] = Field(default=None)
+    seo_title:       Optional[str] = Field(default=None, description="SEO meta title")
+    seo_description: Optional[str] = Field(default=None, description="SEO meta description")
 
 
 @mcp.tool(
@@ -357,6 +359,8 @@ async def shopify_update_product(params: UpdateProductInput) -> str:
             val = getattr(params, field)
             if val is not None:
                 product[field] = val
+        if params.seo_title       is not None: product["metafields_global_title_tag"]       = params.seo_title
+        if params.seo_description is not None: product["metafields_global_description_tag"] = params.seo_description
         data = await _request("PUT", f"products/{params.product_id}.json", json={"product": product})
         return _fmt(data.get("product", data))
     except Exception as e:
