@@ -359,8 +359,8 @@ async def shopify_update_product(params: UpdateProductInput) -> str:
             val = getattr(params, field)
             if val is not None:
                 product[field] = val
-        if params.seo_title       is not None: product["metafields_global_title_tag"]       = params.seo_title
-        if params.seo_description is not None: product["metafields_global_description_tag"] = params.seo_description
+            if params.seo_title       is not None: product["metafields_global_title_tag"]       = params.seo_title
+            if params.seo_description is not None: product["metafields_global_description_tag"] = params.seo_description
         data = await _request("PUT", f"products/{params.product_id}.json", body={"product": product})
         return _fmt(data.get("product", data))
     except Exception as e:
